@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube to MP3 Converter</title>
+    <style>
+      /* Basic reset and body styling */
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+        background-color: #f4f4f4;
+      }
+
+      h2 {
+        font-size: 24px;
+        margin-bottom: 0px;
+      }
+
+      h3 {
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+
+      /* Input, button, and status styling */
+      input, button {
+        padding: 15px;
+        width: 100%;
+        max-width: 500px;
+        font-size: 16px;
+        margin-top: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #00c8ff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #006aff;
+      }
+
+      /* Thumbnail styling */
+      #thumbnail {
+        display: none;
+        margin-top: 20px;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 5px;
+        object-fit: cover; /* Ensures thumbnail is well-scaled */
+      }
+
+      /* Status message */
+      #status {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      /* Responsive design adjustments */
+      @media (max-width: 600px) {
+        h2 {
+          font-size: 20px;
+        }
+
+        input, button {
+          width: 90%;
+        }
+
+        #thumbnail {
+          max-width: 90%;
+        }
+      }
+
+      @media (max-width: 400px) {
+        h2 {
+          font-size: 18px;
+        }
+
+        input, button {
+          width: 80%;
+        }
+
+        #thumbnail {
+          max-width: 80%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h2>YouTube to MP3 Converter</h2>
+    <h3> By Patcharapol </h3>
+    <input id="url" type="text" placeholder="Paste YouTube URL here">
+    <button onclick="download()">Download MP3</button>
+    <img id="thumbnail" src="" alt="Thumbnail">
+    <p id="status"></p>
+
+    <script>
+      const urlInput = document.getElementById("url");
+      const thumbnail = document.getElementById("thumbnail");
+      const status = document.getElementById("status");
+      let dotInterval;
+
+      function extractVideoId(url) {
+        const regex = /(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+      }
+
+      function autoPreview() {
+        const url = urlInput.value.trim();
+        const videoId = extractVideoId(url);
+
+        if (videoId) {
+          thumbnail.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+          thumbnail.style.display = "block";
+          status.innerText = "";
+        } else {
+          thumbnail.style.display = "none";
+          status.innerText = url.length > 0 ? "❌ Invalid YouTube URL" : "";
+        }
+      }
+
+      function startDotAnimation() {
+        let count = 0;
+        dotInterval = setInterval(() => {
+          count = (count + 1) % 4;  // Cycle through 0 to 3
+          status.innerText = "⏳ Downloading" + '.'.repeat(count); // Add dots
+        }, 500); // Add a dot every 500ms
+      }
+
+      function stopDotAnimation() {
+        clearInterval(dotInterval); // Stop the animation
+      }
+
+      function download() {
+        const url = urlInput.value.trim();
+        if (!extractVideoId(url)) {
+          status.innerText = "❌ Please enter a valid YouTube URL.";
+          return;
+        }
+
+        startDotAnimation(); // Start dot animation
+
+        pywebview.api.download(url).then(response => {
+          stopDotAnimation(); // Stop dot animation
+          status.innerText = response;
+        }).catch(error => {
+          stopDotAnimation(); // Stop dot animation in case of error
+          status.innerText = "❌ Error: " + error;
+        });
+      }
+
+      // Listen for input changes to auto-preview thumbnail
+      urlInput.addEventListener("input", autoPreview);
+    </script>
+  </body>
+</html>
