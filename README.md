@@ -19,13 +19,16 @@ You can install the required Python libraries using `pip`:
 The application requires FFmpeg to extract and convert audio from YouTube videos. Follow the steps below to install FFmpeg on your system:
 
 On macOS (using Homebrew):
+
 `brew install ffmpeg`
 
 On Windows:
 Download FFmpeg from the official website: FFmpeg Download and add the bin folder to your system’s PATH.
 
 On Linux (Ubuntu):
+
 `sudo apt update`
+
 `sudo apt install ffmpeg`
 
 ## Usage
@@ -34,3 +37,7 @@ On Linux (Ubuntu):
 3. Make sure you have FFmpeg installed and accessible from your command line.
 4. Run the Python script:
 `python YTCV.py`
+
+## Notes
+- Ensure that both yt-dlp and FFmpeg are installed correctly for the download and conversion to work.
+- The downloaded MP3 files will be saved automatically in the Downloads folder.
